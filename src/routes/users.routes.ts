@@ -4,6 +4,6 @@ import { createUser } from "../controller/user.controller.js";
 
 const userRoutes = Router();
 
-userRoutes.post("/regiser", createUser)
+userRoutes.post("/register", createUser)
 
 export default userRoutes
