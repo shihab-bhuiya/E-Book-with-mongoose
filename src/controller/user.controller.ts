@@ -6,7 +6,7 @@ export const createUser = async (
   res: Response
 ) => {
   try {
-    const { name, email } = req.body;
+    // const { name, email } = req.body;
 
     // const user = await User.create({
     //   name,
