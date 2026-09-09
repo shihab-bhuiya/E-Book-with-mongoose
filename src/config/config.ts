@@ -1,5 +1,5 @@
 import { config as conf } from "dotenv";
-import { env } from "node:process";
+
 
 conf()
 

@@ -1,8 +1,9 @@
 import express, { type NextFunction, type Request, type Response } from "express";
 
-import createHttpError from "http-errors";
+
 import globalErrorHandler from "./middleWare/glodbalErrorHandeler.js";
-import userRoutes from "./routes/users.routes.js";
+import userRouter from "./user/user.router.js";
+
 
 const app = express();
 
@@ -18,7 +19,9 @@ app.get('/',async(req,res)=>{
 })
 
 
-app.use('/api/users',userRoutes);
+app.use('/api/user', userRouter);
+
+
 
 app.use(globalErrorHandler)
 
