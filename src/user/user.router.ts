@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createUser } from "./user.controller.js";
+import { createUser, loginUser } from "./user.controller.js";
 
 
 const userRouter = Router();
@@ -7,6 +7,7 @@ const userRouter = Router();
 
 
 userRouter.post('/register', createUser);
+userRouter.post('/login', loginUser);
 
 
 

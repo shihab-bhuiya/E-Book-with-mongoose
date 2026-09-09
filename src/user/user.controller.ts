@@ -58,7 +58,7 @@ try{
 
     const token = jwt.sign({sub: newUser._id}, config.JwtSecrect as string, {expiresIn: "600"})
 
-    res.status(200).json({
+    res.status(201).json({
         accessToken: token,
     })}
 catch(err){
@@ -69,5 +69,37 @@ catch(err){
 
 
 
+const loginUser = async(req:Request, res: Response, next: NextFunction)=>{
 
-export {createUser};
+    const {email,password} = req.body;
+
+if(!email || !password){
+    const error = createHttpError(400,"All fields are required");
+    return next(error);
+}
+
+const user = await userModel.findOne({
+    email
+});
+
+if(!user){
+    const error = createHttpError(404,"User not found");
+    return next(error);
+}
+
+    const isMatch = await bcyrpt.compare(password, user.password);
+
+    if(!isMatch){
+        const error = createHttpError(401,"Invalid credentials");
+        return next(error);
+    }
+
+
+      const token = jwt.sign({sub: user._id}, config.JwtSecrect as string, {expiresIn: "600"})
+
+    res.status(201).json({
+        accessToken: token,
+    });
+}
+
+export {createUser,loginUser};
