@@ -7,6 +7,7 @@ const _config ={
     port: process.env.PORT,
     dataBaseurl: process.env.MONGO_URI,
     env: process.env.NODE_ENV,
+    JwtSecrect: process.env.JWT_SECRET,
 };
 
 

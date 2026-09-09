@@ -1,7 +1,12 @@
 import type { NextFunction, Request, Response } from "express";
 import createHttpError from "http-errors";
-import mongoose from "mongoose";
+
 import userModel from "./user.model.js";
+
+import bcyrpt from "bcrypt"
+
+import { config } from "../config/config.js";
+import jwt from "jsonwebtoken";
 
 const createUser = async(req:Request, res: Response, next: NextFunction)=>{
 
@@ -25,8 +30,21 @@ const createUser = async(req:Request, res: Response, next: NextFunction)=>{
 
     // password -> hash
 
+    const hashedPassword = await bcyrpt.hash(password, 10);
+
+    const newUser = await userModel.create({
+        name,
+        email,
+        password:hashedPassword,
+    })
+
+
+    // token generation
+
+    const token = jwt.sign({sub: newUser._id}, config.JwtSecrect as string, {expiresIn: "7d"})
+
     res.status(200).json({
-        message:"User Created Successfully",
+        accessToken: token,
     })
 
 }
