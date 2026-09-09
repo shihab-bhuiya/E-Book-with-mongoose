@@ -6,6 +6,8 @@ import userRouter from "./user/user.router.js";
 
 
 const app = express();
+app.use(express.json())
+
 
 app.get('/',async(req,res)=>{
 
