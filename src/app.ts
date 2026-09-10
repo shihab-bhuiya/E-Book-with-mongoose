@@ -3,6 +3,7 @@ import express, { type NextFunction, type Request, type Response } from "express
 
 import globalErrorHandler from "./middleWare/glodbalErrorHandeler.js";
 import userRouter from "./user/user.router.js";
+import bookRouter from "./book/book.router.js";
 
 
 const app = express();
@@ -22,7 +23,7 @@ app.get('/',async(req,res)=>{
 
 
 app.use('/api/user', userRouter);
-
+app.use("/api", bookRouter);
 
 
 

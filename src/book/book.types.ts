@@ -9,4 +9,4 @@ import type { Types } from "mongoose";
         file: string;
         createdAt: Date;
         updatedAt: Date;
-    },
+    }

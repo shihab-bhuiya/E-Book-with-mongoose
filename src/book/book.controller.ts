@@ -3,6 +3,9 @@ import BookModel from "./book.model.js";
 import createHttpError from "http-errors";
 
 const createBook = async (req: Request, res: Response,next: NextFunction) => {
+
+    console.log(req.body);
+    console.log(req.file);
     try {
         const { title, author, genre, coverImage, file } = req.body;
 
