@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import multer from "multer";
 // import authenticate from "../middleWare/authenticate.js";
-import { createBook, updateBook } from "./book.controller.js";
+import { createBook, listOfBooks, updateBook } from "./book.controller.js";
 
 const bookRouter = Router();
 
@@ -27,6 +27,8 @@ bookRouter.post(
 );
 
 bookRouter.patch("/:id",updateBook)
+bookRouter.get("/",listOfBooks)
+
 
 
 

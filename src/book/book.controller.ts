@@ -66,16 +66,25 @@ const createBook = async (
 };
 
 
-const updateBook = async(req:Request,res: Response,next:NextFunction )=>{
+const updateBook = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
 
-  const {id} = req.params;
+    const updatedBook = await BookModel.findByIdAndUpdate(
+      id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
-  try{
-    const updatedBook = await BookModel.findByIdAndUpdate(id,req.body,{new:true});
-
-    if(!updatedBook){
-      const error = createHttpError(404,"Book not found");
-      return next(error);
+    if (!updatedBook) {
+      return next(createHttpError(404, "Book not found"));
     }
 
     res.status(200).json({
@@ -87,4 +96,17 @@ const updateBook = async(req:Request,res: Response,next:NextFunction )=>{
   }
 };
 
-export { createBook, updateBook };
+
+const listOfBooks = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const books = await BookModel.find().populate("author", "name email");
+    res.status(200).json({
+      message: "Books retrieved successfully",
+      books,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { createBook, updateBook, listOfBooks };
