@@ -44,6 +44,12 @@ const createBook = async (
       resource_type: "raw",
     });
 
+    console.log("Cover Upload Result:", coverUploadResult);
+    console.log("File Upload Result:", fileUploadResult);
+    
+    //@ts-ignore
+    console.log("user_id", req.userId);
+
     // Save Cloudinary URLs in MongoDB
     const newBook = await BookModel.create({
       title,

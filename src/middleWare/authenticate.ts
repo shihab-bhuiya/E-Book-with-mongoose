@@ -3,34 +3,49 @@ import createHttpError from "http-errors";
 import jwt from "jsonwebtoken";
 import { config } from "../config/config.js";
 
-
 export interface AuthenticatedRequest extends Request {
-    userId?: string;
+  userId?: string;
 }
 
-const authenticate = (req: Request, res: Response, next: NextFunction) => {
+const authenticate = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const authHeader = req.header("authorization");
 
-    const token = req.header("authorization")
-
-    if (!token) {
-        return next(createHttpError(401,"Authentication token is missing"))
+    if (!authHeader) {
+      return next(
+        createHttpError(401, "Authentication token is missing")
+      );
     }
 
-    const parseToken = token.split(" ")[1]
+    const [scheme, token] = authHeader.split(" ");
 
-    if (!parseToken) {
-        return next(createHttpError(401,"Authentication token is missing"))
+    if (scheme !== "Bearer" || !token) {
+      return next(
+        createHttpError(401, "Invalid authentication format")
+      );
     }
 
-    const decoded = jwt.verify(parseToken,config.JwtSecrect as string)
-    console.log("Decoded Token:", decoded);
-    
-    const _req = req as AuthenticatedRequest;
-    _req.userId = decoded.sub as string;
+    const decoded = jwt.verify(token, config.JwtSecrect as string);
 
-    next()
+    if (typeof decoded === "string" || !decoded.sub) {
+      return next(
+        createHttpError(401, "Invalid authentication token")
+      );
+    }
 
+    const authenticatedRequest = req as AuthenticatedRequest;
+    authenticatedRequest.userId = decoded.sub;
 
-}
+    next();
+  } catch (error) {
+    next(
+      createHttpError(401, "Invalid or expired authentication token")
+    );
+  }
+};
 
 export default authenticate;
