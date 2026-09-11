@@ -23,7 +23,7 @@ app.get('/',async(req,res)=>{
 
 
 app.use('/api/user', userRouter);
-app.use("/api", bookRouter);
+app.use("/api/books", bookRouter);
 
 
 

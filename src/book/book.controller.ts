@@ -40,7 +40,7 @@ const createBook = async (
 
     // Upload book file/PDF to Cloudinary
     const fileUploadResult = await cloudinary.uploader.upload(file.path, {
-      folder: "books",
+      folder: "books-pdf",
       resource_type: "raw",
     });
 
