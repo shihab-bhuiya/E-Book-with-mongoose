@@ -5,15 +5,22 @@ import multer from "multer";
 const bookRouter = Router();
 
 const   upload = multer({
-    dest: "uploads/",
+    dest: "public/uploads/",
     limits: {
-        fileSize: 20 * 1024 * 1024, // 10MB
+        fileSize: 20 * 1024 * 1024, // 20MB
     },
 
 })
 
 
-bookRouter.post("/books", upload.single("file"), createBook);
+bookRouter.post(
+  "/books",
+  upload.fields([
+    { name: "coverImage", maxCount: 1 },
+    { name: "file", maxCount: 1 },
+  ]),
+  createBook
+);
 
 
 

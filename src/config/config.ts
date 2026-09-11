@@ -8,6 +8,9 @@ const _config ={
     dataBaseurl: process.env.MONGO_URI,
     env: process.env.NODE_ENV,
     JwtSecrect: process.env.JWT_SECRET,
+    CloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME,
+    CloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
+    CloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET,
 };
 
 
