@@ -1,13 +1,13 @@
 import { Types } from "mongoose";
 import BookModel from "./book.model.js";
 import fs from "fs/promises";
-import type { NextFunction, Response } from "express";
-import type { AuthenticatedRequest } from "../middleWare/authenticate.js";
+import type { NextFunction, Request, Response } from "express";
+// import type { AuthenticatedRequest } from "../middleWare/authenticate.js";
 import createHttpError from "http-errors";
 import cloudinary from "../config/cloudinary.js";
 
 const createBook = async (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -26,11 +26,11 @@ const createBook = async (
       throw createHttpError(400, "All fields are required");
     }
 
-    const _req = req as AuthenticatedRequest;
+    // const _req = req as AuthenticatedRequest;
 
-    if (!_req.userId) {
-      throw createHttpError(401, "User is not authenticated");
-    }
+    // if (!_req.userId) {
+    //   throw createHttpError(401, "User is not authenticated");
+    // }
 
     const coverUploadResult = await cloudinary.uploader.upload(
       coverImage.path,
@@ -47,7 +47,7 @@ const createBook = async (
 
     const newBook = await BookModel.create({
       title,
-      author: new Types.ObjectId(_req.userId),
+      author: new Types.ObjectId(), // Replace with the actual user ID from the authenticated request
       genre,
       coverImage: coverUploadResult.secure_url,
       file: fileUploadResult.secure_url,
@@ -65,4 +65,26 @@ const createBook = async (
   }
 };
 
-export { createBook };
+
+const updateBook = async(req:Request,res: Response,next:NextFunction )=>{
+
+  const {id} = req.params;
+
+  try{
+    const updatedBook = await BookModel.findByIdAndUpdate(id,req.body,{new:true});
+
+    if(!updatedBook){
+      const error = createHttpError(404,"Book not found");
+      return next(error);
+    }
+
+    res.status(200).json({
+      message: "Book updated successfully",
+      book: updatedBook,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { createBook, updateBook };
