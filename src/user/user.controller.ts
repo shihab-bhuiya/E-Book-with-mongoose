@@ -1,10 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import createHttpError from "http-errors";
-
 import userModel from "./user.model.js";
-
 import bcyrpt from "bcrypt"
-
 import { config } from "../config/config.js";
 import jwt from "jsonwebtoken";
 import type { User } from "./user.types.js";
@@ -56,7 +53,7 @@ try{
 
     // token generation
 
-    const token = jwt.sign({sub: newUser._id}, config.JwtSecrect as string, {expiresIn: "600"})
+    const token = jwt.sign({sub: newUser._id}, config.JwtSecret as string, {expiresIn: "7d"})
 
     res.status(201).json({
         accessToken: token,
@@ -95,7 +92,7 @@ if(!user){
     }
 
 
-      const token = jwt.sign({sub: user._id}, config.JwtSecrect as string, {expiresIn: "600"})
+      const token = jwt.sign({sub: user._id}, config.JwtSecret as string, {expiresIn: "7d"})
 
     res.status(201).json({
         accessToken: token,

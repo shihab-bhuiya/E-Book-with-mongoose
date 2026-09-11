@@ -1,20 +1,18 @@
-import type { NextFunction, Request, Response } from "express";
+import { Types } from "mongoose";
 import BookModel from "./book.model.js";
-import createHttpError from "http-errors";
-
 import fs from "fs/promises";
+import type { NextFunction, Response } from "express";
+import type { AuthenticatedRequest } from "../middleWare/authenticate.js";
+import createHttpError from "http-errors";
 import cloudinary from "../config/cloudinary.js";
 
 const createBook = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    console.log("BODY:", req.body);
-    console.log("FILES:", req.files);
-
-    const { title, author, genre } = req.body;
+    const { title, genre } = req.body;
 
     const files = req.files as {
       coverImage?: Express.Multer.File[];
@@ -24,12 +22,16 @@ const createBook = async (
     const coverImage = files.coverImage?.[0];
     const file = files.file?.[0];
 
-    // Check required fields
-    if (!title || !author || !genre || !coverImage || !file) {
+    if (!title || !genre || !coverImage || !file) {
       throw createHttpError(400, "All fields are required");
     }
 
-    // Upload cover image to Cloudinary
+    const _req = req as AuthenticatedRequest;
+
+    if (!_req.userId) {
+      throw createHttpError(401, "User is not authenticated");
+    }
+
     const coverUploadResult = await cloudinary.uploader.upload(
       coverImage.path,
       {
@@ -38,30 +40,21 @@ const createBook = async (
       }
     );
 
-    // Upload book file/PDF to Cloudinary
     const fileUploadResult = await cloudinary.uploader.upload(file.path, {
       folder: "books-pdf",
       resource_type: "raw",
     });
 
-    console.log("Cover Upload Result:", coverUploadResult);
-    console.log("File Upload Result:", fileUploadResult);
-    
-    //@ts-ignore
-    console.log("user_id", req.userId);
-
-    // Save Cloudinary URLs in MongoDB
     const newBook = await BookModel.create({
       title,
-      author,
+      author: new Types.ObjectId(_req.userId),
       genre,
       coverImage: coverUploadResult.secure_url,
       file: fileUploadResult.secure_url,
     });
 
-    // Delete temporary files from local server
-    await fs.unlink(coverImage.path);
-    await fs.unlink(file.path);
+ await fs.unlink(coverImage.path); 
+ await fs.unlink(file.path);
 
     res.status(201).json({
       message: "Book created successfully",

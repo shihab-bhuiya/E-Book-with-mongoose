@@ -29,7 +29,7 @@ const authenticate = (
       );
     }
 
-    const decoded = jwt.verify(token, config.JwtSecrect as string);
+    const decoded = jwt.verify(token, config.JwtSecret as string);
 
     if (typeof decoded === "string" || !decoded.sub) {
       return next(
